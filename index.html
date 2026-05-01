@@ -70,22 +70,22 @@ select{
 }
 
 #guideBlock{
-    display:flex;
+    flex:0 0 auto;
     flex-direction:column;
     align-items:center;
     gap:8px;
 }
 
-/* guide image */
 #guide{
-    width:360px;
-    height:auto;
+    width:240px;
+    height:240px;
+    object-fit:contain;
+    flex:0 0 auto;
     border:1px solid #666;
     border-radius:6px;
     opacity:0.9;
 }
 
-/* copied text */
 #copied{
     font-size:14px;
     color:#fab901;
@@ -174,7 +174,6 @@ function loadImage(){
     marker.style.display = "none";
     result.innerText = "!shoot ? ?";
 
-    // hide copied text on map switch
     copied.innerText = "";
 }
 
@@ -196,7 +195,6 @@ function getCoords(e){
     };
 }
 
-/* LIVE UPDATE */
 map.addEventListener("mousemove", function(e){
 
     const c = getCoords(e);
@@ -205,7 +203,6 @@ map.addEventListener("mousemove", function(e){
     result.innerText = `!shoot ${c.x} ${c.y}`;
 });
 
-/* CLICK COPY + SHOW STATUS */
 map.addEventListener("click", function(e){
 
     const c = getCoords(e);
@@ -215,12 +212,10 @@ map.addEventListener("click", function(e){
     result.innerText = text;
     navigator.clipboard.writeText(text);
 
-    // update marker
     marker.style.left = c.px + "px";
     marker.style.top = c.py + "px";
     marker.style.display = "block";
 
-    // show copied message
     copied.innerText = `Copied: ${text}`;
 });
 
