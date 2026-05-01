@@ -3,30 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <title>Shoot Coordinate Tool</title>
+
 <style>
 body{
-    font-family:Arial;
-    text-align:center;
+    margin:0;
     padding:20px;
+    background:#2f2f2f;
+    color:white;
+    font-family:Arial, sans-serif;
+    text-align:center;
 }
-img{
-    max-width:90%;
-    max-height:70vh;
-    cursor:crosshair;
-    border:1px solid #999;
+
+h2{
+    margin-top:0;
 }
-button, select{
+
+select{
     padding:10px;
-    margin:8px;
     font-size:16px;
+    margin-bottom:15px;
+    background:#444;
+    color:white;
+    border:1px solid #666;
 }
+
+#wrap{
+    position:relative;
+    display:inline-block;
+    max-width:90%;
+}
+
+#map{
+    max-width:100%;
+    max-height:75vh;
+    display:block;
+    cursor:crosshair;
+    border:1px solid #666;
+}
+
+#marker{
+    position:absolute;
+    width:10px;
+    height:10px;
+    background:red;
+    border-radius:50%;
+    transform:translate(-50%, -50%);
+    pointer-events:none;
+    display:none;
+    box-shadow:0 0 6px red;
+}
+
 #result{
-    margin-top:15px;
+    margin-top:18px;
     font-size:24px;
     font-weight:bold;
 }
 </style>
 </head>
+
 <body>
 
 <h2>Click Target</h2>
@@ -40,11 +74,12 @@ button, select{
 
 <br>
 
-<img id="map">
+<div id="wrap">
+    <img id="map">
+    <div id="marker"></div>
+</div>
 
 <div id="result">!shoot ? ?</div>
-
-<button onclick="copyText()">Copy</button>
 
 <script>
 const images = [
@@ -56,33 +91,38 @@ const images = [
 
 const picker = document.getElementById("picker");
 const map = document.getElementById("map");
+const marker = document.getElementById("marker");
 const result = document.getElementById("result");
 
-let currentText = "";
-
 function loadImage(){
-    const i = images[picker.value];
-    map.src = i.file;
+    map.src = images[picker.value].file;
+    marker.style.display = "none";
+    result.innerText = "!shoot ? ?";
 }
+
 picker.addEventListener("change", loadImage);
 
 map.addEventListener("click", function(e){
+
     const img = images[picker.value];
     const rect = map.getBoundingClientRect();
 
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
+    const localX = e.clientX - rect.left;
+    const localY = e.clientY - rect.top;
 
-    const x = Math.round(clickX / rect.width * img.w);
-    const y = Math.round(clickY / rect.height * img.h);
+    const x = Math.round(localX / rect.width * img.w);
+    const y = Math.round(localY / rect.height * img.h);
 
-    currentText = `!shoot ${x} ${y}`;
-    result.innerText = currentText;
+    const text = `!shoot ${x} ${y}`;
+
+    result.innerText = text;
+
+    marker.style.left = localX + "px";
+    marker.style.top = localY + "px";
+    marker.style.display = "block";
+
+    navigator.clipboard.writeText(text);
 });
-
-function copyText(){
-    navigator.clipboard.writeText(currentText);
-}
 
 loadImage();
 </script>
