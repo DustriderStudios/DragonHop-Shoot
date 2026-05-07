@@ -49,10 +49,10 @@ select{
     position:relative;
     flex:1;
     min-width:0;
+
     display:flex;
-    justify-content:flex-end;
+    justify-content:center;
     align-items:center;
-    padding-right:40px;
 }
 
 #map{
@@ -81,10 +81,12 @@ select{
 #guideBlock{
     width:260px;
     flex-shrink:0;
+
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
+
     gap:10px;
 }
 
@@ -105,9 +107,11 @@ select{
 
 #result{
     margin-top:20px;
+
     display:flex;
     justify-content:center;
     gap:28px;
+
     font-size:24px;
     font-weight:bold;
 }
@@ -132,6 +136,7 @@ select{
 
 <div id="controls">
     <label>Select Map:</label>
+
     <select id="picker">
         <option value="0">Ice</option>
         <option value="1">Snake</option>
@@ -141,6 +146,7 @@ select{
 </div>
 
 <div id="main">
+
     <div id="wrap">
         <img id="map">
         <div id="marker"></div>
@@ -150,20 +156,25 @@ select{
         <img id="guide" src="guide.png" alt="Guide">
         <div id="copied"></div>
     </div>
+
 </div>
 
 <div id="result">
+
     <div class="coord">
         <span class="coordLabel">X</span>
         <span id="xCoord">?</span>
     </div>
+
     <div class="coord">
         <span class="coordLabel">Y</span>
         <span id="yCoord">?</span>
     </div>
+
 </div>
 
 <script>
+
 const images = [
     {
         file:"img1.png",
@@ -171,18 +182,21 @@ const images = [
         scaleX:172,
         scaleY:172
     },
+
     {
         file:"img2.png",
         origin:{x:116,y:148},
         scaleX:188,
         scaleY:188
     },
+
     {
         file:"img3.png",
         origin:{x:46,y:50},
         scaleX:74,
         scaleY:74
     },
+
     {
         file:"img4.png",
         origin:{x:34,y:43},
@@ -195,58 +209,82 @@ const picker = document.getElementById("picker");
 const map = document.getElementById("map");
 const marker = document.getElementById("marker");
 const copied = document.getElementById("copied");
+
 const xCoord = document.getElementById("xCoord");
 const yCoord = document.getElementById("yCoord");
+
 const wrap = document.getElementById("wrap");
 
 function loadImage(){
+
     map.src = images[picker.value].file;
+
     marker.style.display = "none";
+
     xCoord.innerText = "?";
     yCoord.innerText = "?";
+
     copied.innerText = "";
 }
 
 function getCoords(e){
+
     const cfg = images[picker.value];
+
     const rect = map.getBoundingClientRect();
+
     const scaleX = map.naturalWidth / rect.width;
     const scaleY = map.naturalHeight / rect.height;
+
     const offsetX = e.clientX - rect.left;
     const offsetY = e.clientY - rect.top;
+
     const imgX = offsetX * scaleX;
     const imgY = offsetY * scaleY;
+
     const x = (imgX - cfg.origin.x) / cfg.scaleX;
     const y = (imgY - cfg.origin.y) / cfg.scaleY;
+
     return {
         x: x.toFixed(1),
         y: y.toFixed(1),
+
         markerX: e.clientX - wrap.getBoundingClientRect().left,
         markerY: e.clientY - wrap.getBoundingClientRect().top
     };
 }
 
 map.addEventListener("mousemove", function(e){
+
     const c = getCoords(e);
+
     xCoord.innerText = c.x;
     yCoord.innerText = c.y;
 });
 
 map.addEventListener("click", function(e){
+
     const c = getCoords(e);
+
     const text = `!shoot ${c.x} ${c.y}`;
+
     navigator.clipboard.writeText(text);
+
     xCoord.innerText = c.x;
     yCoord.innerText = c.y;
+
     marker.style.left = c.markerX + "px";
     marker.style.top = c.markerY + "px";
+
     marker.style.display = "block";
+
     copied.innerText = `Copied: ${text}`;
 });
 
 picker.addEventListener("change", loadImage);
 
 loadImage();
+
 </script>
 
 </body>
